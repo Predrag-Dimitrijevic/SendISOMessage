@@ -17,8 +17,11 @@ public class Config {
   public static Boolean SEND_61_AS_HEX = null;
   public static Boolean GET_61_AS_HEX = null;
 
-  public static void readConfig() {
-    File configFile = new File(CONFIG_LOCATION);
+  public static void readConfig(String filePath) {
+    String currentDir = System.getProperty("user.dir");
+    System.out.println("Current dir using System:" + currentDir);
+
+    File configFile = new File(filePath);
     BufferedReader br = null;
     try {
       br = new BufferedReader(new FileReader(configFile));
@@ -71,5 +74,9 @@ public class Config {
         System.err.println("IOException: " + e.getMessage());
       }
     }
+  }
+
+  public static void readConfig() {
+    readConfig(CONFIG_LOCATION);
   }
 }

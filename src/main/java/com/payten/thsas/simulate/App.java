@@ -2,20 +2,25 @@ package com.payten.thsas.simulate;
 
 import com.payten.thsas.simulate.config.Config;
 
-/**
- * Hello world!
- */
+/** Hello world! */
 public class App {
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+  private static final boolean DEBUG = true;
 
-        Config.readConfig();
-        ISOContent content = new ISOContent();
-        content.readFile();
-        ISOSender sender = new ISOSender();
-        sender.setMessage(content);
-    
-        sender.send();
+  public static void main(String[] args) {
+    System.out.println("Hello World!");
 
+    ISOSender sender = new ISOSender();
+    ISOContent content = new ISOContent();
+
+    if (DEBUG) {
+      String configPath = "./src/main/config/";
+      Config.readConfig(configPath + "config_debug.txt");
+    } else {
+      Config.readConfig();
     }
+
+    content.readFile();
+    sender.setMessage(content);
+    sender.send();
+  }
 }
