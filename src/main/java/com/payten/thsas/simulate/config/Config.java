@@ -18,7 +18,7 @@ public class Config {
   public static String ISO_MSG = null;
   public static Integer TAG_NAME_LEN = null;
   public static Integer TAG_SIZE_LEN = null;
-  public static Boolean SEND_61_AS_HEX = null;
+  public static Boolean SEND_60_AS_HEX = null;
   public static Boolean GET_61_AS_HEX = null;
 
   public static void readConfig(String filePath) {
@@ -53,8 +53,8 @@ public class Config {
         if ("TAG_SIZE_LEN".equals(name)) {
           TAG_SIZE_LEN = Integer.valueOf(value);
         }
-        if ("SEND_61_AS_HEX".equals(name)) {
-          SEND_61_AS_HEX = Boolean.valueOf(value);
+        if ("SEND_60_AS_HEX".equals(name)) {
+          SEND_60_AS_HEX = Boolean.valueOf(value);
         }
         if ("GET_61_AS_HEX".equals(name)) {
           GET_61_AS_HEX = Boolean.valueOf(value);
@@ -67,7 +67,7 @@ public class Config {
       log.info("ISO_MSG: " + ISO_MSG);
       log.info("TAG_NAME_LEN: " + TAG_NAME_LEN);
       log.info("TAG_SIZE_LEN: " + TAG_SIZE_LEN);
-      log.info("SEND_61_AS_HEX: " + SEND_61_AS_HEX);
+      log.info("SEND_60_AS_HEX: " + SEND_60_AS_HEX);
       log.info("GET_61_AS_HEX: " + GET_61_AS_HEX);
     } catch (IOException e) {
       log.error("IOException: " + e.getMessage());
