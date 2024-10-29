@@ -20,13 +20,14 @@ public class ISOSender {
 
   public static final String NEW_LINE = System.getProperty("line.separator");
 
-  private ISOMsg isoMsg = null;
+  private ISOMsg isoMsgIn = null;
+  private ISOMsg isoMsgOut = null;
   
 
   public ISOSender() {}
 
   public void send() {
-    ISOMsg message = getMessage();
+    ISOMsg message = getIsoMsgIn();
     try {
       ISOChannel channel =
           new ASCIIChannel(
@@ -38,8 +39,9 @@ public class ISOSender {
       channel.send(message);
 
       ISOMsg response = channel.receive();
+      setIsoMsgOut(response);
 
-      log.info(dumpMessage(response));
+      // log.info(dumpMessage(response));
 
     } catch (ISOException e) {
       log.error("ISOException: " + e.getMessage());
@@ -50,16 +52,17 @@ public class ISOSender {
     }
   }
 
-  public void setMessage(ISOContent isoContent) {
+  public void setInputMessage(ISOContent input) {
     try {
-      isoMsg = isoContent.getISOMsg();
+      isoMsgIn = input.getISOMsg();
     } catch (ISOException e) {
       log.error("ISOException: " + e.getMessage());
     }
   }
 
-  private ISOMsg getMessage() {
-    return isoMsg;
+  public ISOContent getOutputMessage() {
+    return new ISOContent(isoMsgOut);
+    
   }
 
   public static String dumpMessage(ISOMsg m) {
@@ -110,5 +113,47 @@ public class ISOSender {
               + "***************";
     }
     return track2;
+  }
+
+
+
+  public static Logger getLog() {
+    return log;
+  }
+
+
+
+  public static void setLog(Logger log) {
+    ISOSender.log = log;
+  }
+
+
+
+  public static String getNewLine() {
+    return NEW_LINE;
+  }
+
+
+
+  public ISOMsg getIsoMsgIn() {
+    return isoMsgIn;
+  }
+
+
+
+  public void setIsoMsgIn(ISOMsg isoMsgIn) {
+    this.isoMsgIn = isoMsgIn;
+  }
+
+
+
+  public ISOMsg getIsoMsgOut() {
+    return isoMsgOut;
+  }
+
+
+
+  public void setIsoMsgOut(ISOMsg isoMsgOut) {
+    this.isoMsgOut = isoMsgOut;
   }
 }

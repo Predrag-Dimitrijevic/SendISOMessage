@@ -13,7 +13,7 @@ public class App {
     log.info("Starting SendISOMessage");
 
     ISOSender sender = new ISOSender();
-    ISOContent content = new ISOContent();
+    ISOContent input = new ISOContent();
 
     if (DEBUG) {
       log.debug("DEBUG MODE ON");
@@ -23,8 +23,14 @@ public class App {
       Config.readConfig();
     }
 
-    content.readFile();
-    sender.setMessage(content);
+    input.readFile();
+    log.info("Input: ");
+    input.printISOMessage();
+    sender.setInputMessage(input);
     sender.send();
+
+    ISOContent output = sender.getOutputMessage();
+    log.info("output: ");
+    output.printISOMessage();
   }
 }
