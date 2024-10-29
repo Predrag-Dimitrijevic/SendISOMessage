@@ -11,12 +11,17 @@ import org.jpos.iso.ISOPackager;
 import org.jpos.iso.ISOUtil;
 import org.jpos.iso.channel.ASCIIChannel;
 import org.jpos.iso.packager.GenericPackager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ISOSender {
+
+	private static Logger log = LogManager.getLogger(ISOSender.class);
 
   public static final String NEW_LINE = System.getProperty("line.separator");
 
   private ISOMsg isoMsg = null;
+  
 
   public ISOSender() {}
 
@@ -34,14 +39,14 @@ public class ISOSender {
 
       ISOMsg response = channel.receive();
 
-      System.out.println(dumpMessage(response));
+      log.info(dumpMessage(response));
 
     } catch (ISOException e) {
-      System.err.println("ISOException: " + e.getMessage());
+      log.error("ISOException: " + e.getMessage());
     } catch (FileNotFoundException e) {
-      System.err.println("FileNotFoundException: " + e.getMessage());
+      log.error("FileNotFoundException: " + e.getMessage());
     } catch (IOException e) {
-      System.err.println("IOException: " + e.getMessage());
+      log.error("IOException: " + e.getMessage());
     }
   }
 
@@ -49,7 +54,7 @@ public class ISOSender {
     try {
       isoMsg = isoContent.getISOMsg();
     } catch (ISOException e) {
-      System.err.println("ISOException: " + e.getMessage());
+      log.error("ISOException: " + e.getMessage());
     }
   }
 

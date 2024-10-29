@@ -4,8 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Config {
+	private static Logger log = LogManager.getLogger(Config.class);
+
   private static final String CONFIG_LOCATION = "../config/config.txt";
 
   public static String URL = null;
@@ -19,7 +23,7 @@ public class Config {
 
   public static void readConfig(String filePath) {
     String currentDir = System.getProperty("user.dir");
-    System.out.println("Current dir using System:" + currentDir);
+    log.info("Current dir using System:" + currentDir);
 
     File configFile = new File(filePath);
     BufferedReader br = null;
@@ -57,21 +61,21 @@ public class Config {
         }
         line = br.readLine();
       }
-      System.out.println("URL: " + URL);
-      System.out.println("PORT: " + PORT);
-      System.out.println("PACKAGER: " + PACKAGER);
-      System.out.println("ISO_MSG: " + ISO_MSG);
-      System.out.println("TAG_NAME_LEN: " + TAG_NAME_LEN);
-      System.out.println("TAG_SIZE_LEN: " + TAG_SIZE_LEN);
-      System.out.println("SEND_61_AS_HEX: " + SEND_61_AS_HEX);
-      System.out.println("GET_61_AS_HEX: " + GET_61_AS_HEX);
+      log.info("URL: " + URL);
+      log.info("PORT: " + PORT);
+      log.info("PACKAGER: " + PACKAGER);
+      log.info("ISO_MSG: " + ISO_MSG);
+      log.info("TAG_NAME_LEN: " + TAG_NAME_LEN);
+      log.info("TAG_SIZE_LEN: " + TAG_SIZE_LEN);
+      log.info("SEND_61_AS_HEX: " + SEND_61_AS_HEX);
+      log.info("GET_61_AS_HEX: " + GET_61_AS_HEX);
     } catch (IOException e) {
-      System.err.println("IOException: " + e.getMessage());
+      log.error("IOException: " + e.getMessage());
     } finally {
       try {
         if (br != null) br.close();
       } catch (IOException e) {
-        System.err.println("IOException: " + e.getMessage());
+        log.error("IOException: " + e.getMessage());
       }
     }
   }

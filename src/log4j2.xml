@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+	<!-- Author: Crunchify.com -->
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{dd-YYYY HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
+		</Console>
+
+		<RollingFile name="RollingFile" filename="log/trace.log"
+			filePattern="log/trace.%d{YYYY-MM-dd}.log.gz"
+			ignoreExceptions="false">
+			<PatternLayout
+				pattern="%d{dd-MM-YYYY HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+			</Policies>
+			<DefaultRolloverStrategy max="5" />
+		</RollingFile>
+
+
+	</Appenders>
+	<Loggers>
+		<Root level="debug">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="RollingFile" />
+		</Root>
+	</Loggers>
+</Configuration>

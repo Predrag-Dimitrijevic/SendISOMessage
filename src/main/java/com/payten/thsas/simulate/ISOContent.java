@@ -12,8 +12,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 public class ISOContent {
 
+	private static Logger log = LogManager.getLogger(ISOContent.class);
   private static final String TYPE_FILE = "F";
   private static final String TYPE_TAG = "T";
   
@@ -75,23 +80,23 @@ public class ISOContent {
       }
 
     } catch (IOException e) {
-      System.err.println("IOException: " + e.getMessage());
+      log.error("IOException: " + e.getMessage());
     } finally {
       try {
         if (br != null) br.close();
       } catch (IOException e) {
-        System.err.println("IOException: " + e.getMessage());
+        log.error("IOException: " + e.getMessage());
       }
     }
 
     for (int i = 0; i <= maxField; i++) {
       if(i != 60) {
         if(fields.containsKey(i)) {
-          System.out.println("Field[" + i + "]: " + fields.get(i));
+          log.info("Field[" + i + "]: " + fields.get(i));
         }
       } else {
         for (String name : tags.keySet()) {
-          System.out.println("Tag[" + name + "]: " + tags.get(name));
+          log.info("Tag[" + name + "]: " + tags.get(name));
         }
 
       }
@@ -116,10 +121,10 @@ public class ISOContent {
       isoMsg.set(60, composeTags());
     }
 
-    System.out.println("ISOMsg:");
+    log.info("ISOMsg:");
     for(int i = 0; i <= isoMsg.getMaxField(); i++) {
       if(isoMsg.hasField(i)) {
-        System.out.println("F[" + i + "]: " + isoMsg.getValue(i));
+        log.info("F[" + i + "]: " + isoMsg.getValue(i));
       }
     }
     
