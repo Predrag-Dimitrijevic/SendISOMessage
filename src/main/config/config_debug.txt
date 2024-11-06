@@ -3,6 +3,11 @@ PORT 6730
 PACKAGER ./src/main/config/atmCustom.xml
 ISO_MSG ./src/main/config/iso_msg.txt
 TAG_NAME_LEN 3
-TAG_SIZE_LEN 3
+TAG_SIZE_LEN 4
+SEND_60_AS_HEX false
 SEND_61_AS_HEX false
+GET_60_AS_HEX false
 GET_61_AS_HEX false
+
+
+

@@ -48,7 +48,15 @@ public class ISOContent {
       if (isoMsg.hasField(i)) {
         log.debug("F[{}]: {}", i, isoMsg.getValue(i));
         if (i == 60) {
-          String field60 = (String) isoMsg.getValue(60);
+          String field60 = null;
+          if (Config.GET_60_AS_HEX) {
+            byte[] field60ByteArray = (byte[]) isoMsg.getValue(60);
+            String field60Hex = byteArrayToHex(field60ByteArray);
+            field60 = convertHexToString(field60Hex);
+
+          } else {
+            field60 = (String) isoMsg.getValue(60);
+          }
           while (field60.length() > 0) {
             String name = field60.substring(0, Config.TAG_NAME_LEN);
             log.debug("tag name: {}", name);
@@ -62,6 +70,7 @@ public class ISOContent {
             field60 = field60.substring(len);
             f60tags.put(name, value);
           }
+
         } else if (i == 61) {
           String field61 = null;
           if (Config.GET_61_AS_HEX) {
@@ -183,12 +192,12 @@ public class ISOContent {
       }
     }
     if (!fields.containsKey(60) && f60tags != null && f60tags.size() > 0) {
-      String tagStr = composeTags(f60tags);
+      String tagStr = composeTags(f60tags, Config.SEND_60_AS_HEX);
       log.debug("setting field 60 to {}", tagStr);
       isoMsg.set(60, tagStr);
     }
     if (!fields.containsKey(61) && f61tags != null && f61tags.size() > 0) {
-      String tagStr = composeTags(f61tags);
+      String tagStr = composeTags(f61tags, Config.SEND_61_AS_HEX);
       log.debug("setting field 61 to {}", tagStr);
       isoMsg.set(61, tagStr);
     }
@@ -203,7 +212,7 @@ public class ISOContent {
     return isoMsg;
   }
 
-  private String composeTags(Map<String, String> tags) {
+  private String composeTags(Map<String, String> tags, boolean sendAsHex) {
     log.info("composeTags");
     if (tags == null || tags.isEmpty()) {
       return "";
@@ -216,6 +225,9 @@ public class ISOContent {
           StringUtils.leftPad(String.valueOf(tags.get(name).length()), Config.TAG_SIZE_LEN, "0");
       tagsString.append(lenStr);
       tagsString.append(tags.get(name));
+    }
+    if(sendAsHex) {
+      return byteArrayToHex(tagsString.toString().getBytes());
     }
 
     return tagsString.toString();

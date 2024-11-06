@@ -4,5 +4,7 @@ PACKAGER ../config/atmCustomTAS.xml
 ISO_MSG ../config/iso_msg.txt
 TAG_NAME_LEN 3
 TAG_SIZE_LEN 4
-SEND_61_AS_HEX false
-GET_61_AS_HEX false
+SEND_60_AS_HEX true
+SEND_61_AS_HEX true
+GET_60_AS_HEX true
+GET_61_AS_HEX true
