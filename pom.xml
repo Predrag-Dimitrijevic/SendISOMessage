@@ -127,6 +127,10 @@
                 <mainClass>com.payten.thsas.simulate.App</mainClass>
                 <id>SendISOMessage</id>
               </program>
+              <program>
+                <mainClass>com.payten.thsas.simulate.AppGUI</mainClass>
+                <id>SendISOMessageGUI</id>
+              </program>
             </programs>
           </configuration>
         </plugin>
