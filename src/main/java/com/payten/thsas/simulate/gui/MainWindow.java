@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import com.payten.thsas.simulate.ISOContent;
 import com.payten.thsas.simulate.config.Config;
 
 public class MainWindow extends JFrame {
@@ -45,7 +46,21 @@ public class MainWindow extends JFrame {
     super();
     init();
     populateConfig();
+    populateIsoMsg();
     initConnections();
+  }
+
+  private void populateIsoMsg() {
+    populateIsoMsg(Config.ISO_MSG);
+  }
+
+  private void populateIsoMsg(String isoMsg) {
+    ISOContent isoContent = new ISOContent();
+    isoContent.readFile(isoMsg);
+    inputTextArea.setText(isoContent.getAsString());
+
+    revalidate();
+    repaint();
   }
 
   private void populateConfig() {
