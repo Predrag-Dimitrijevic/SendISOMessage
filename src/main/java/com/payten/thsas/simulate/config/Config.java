@@ -1,14 +1,16 @@
 package com.payten.thsas.simulate.config;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Config {
-	private static Logger log = LogManager.getLogger(Config.class);
+  private static Logger log = LogManager.getLogger(Config.class);
 
   private static final String CONFIG_LOCATION = "../config/config.txt";
 
@@ -92,5 +94,51 @@ public class Config {
 
   public static void readConfig() {
     readConfig(CONFIG_LOCATION);
+  }
+
+  public static void writeConfig(String filePath) {
+    String currentDir = System.getProperty("user.dir");
+    log.info("Current dir using System:" + currentDir);
+
+    File configFile = new File(filePath);
+    if (configFile.exists()) {
+      configFile.delete();
+    }
+    BufferedWriter bw = null;
+    try {
+      configFile.createNewFile();
+      bw = new BufferedWriter(new FileWriter(configFile));
+      bw.write("URL " + URL);
+      bw.newLine();
+      bw.write("PORT " + PORT);
+      bw.newLine();
+      bw.write("PACKAGER " + PACKAGER);
+      bw.newLine();
+      bw.write("ISO_MSG " + ISO_MSG);
+      bw.newLine();
+      bw.write("TAG_NAME_LEN " + TAG_NAME_LEN);
+      bw.newLine();
+      bw.write("TAG_SIZE_LEN " + TAG_SIZE_LEN);
+      bw.newLine();
+      bw.write("SEND_60_AS_HEX " + SEND_60_AS_HEX);
+      bw.newLine();
+      bw.write("SEND_61_AS_HEX " + SEND_61_AS_HEX);
+      bw.newLine();
+      bw.write("GET_60_AS_HEX " + GET_60_AS_HEX);
+      bw.newLine();
+      bw.write("GET_61_AS_HEX " + GET_61_AS_HEX);
+    } catch (IOException e) {
+      log.error("IOException: " + e.getMessage());
+    } finally {
+      try {
+        if (bw != null) bw.close();
+      } catch (IOException e) {
+        log.error("IOException: " + e.getMessage());
+      }
+    }
+  }
+
+  public static void writeConfig() {
+    writeConfig(CONFIG_LOCATION);
   }
 }
