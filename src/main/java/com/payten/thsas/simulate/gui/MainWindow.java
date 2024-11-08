@@ -1,9 +1,14 @@
 package com.payten.thsas.simulate.gui;
 
+import com.payten.thsas.simulate.ISOContent;
+import com.payten.thsas.simulate.ISOSender;
+import com.payten.thsas.simulate.config.Config;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -15,10 +20,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
-import com.payten.thsas.simulate.ISOContent;
-import com.payten.thsas.simulate.config.Config;
-
 public class MainWindow extends JFrame {
+
+  private ActionListener actionListener;
+
   private JPanel mainPanel;
   private JTextField ipTextField;
   private JTextField portTextField;
@@ -80,20 +85,32 @@ public class MainWindow extends JFrame {
     if (Config.PACKAGER != null) {
       packagerTextField.setText(Config.PACKAGER);
     }
-    if (Config.SEND_60_AS_HEX != null ) {
+    if (Config.SEND_60_AS_HEX != null) {
       send60AsHexCheckBox.setSelected(Config.SEND_60_AS_HEX);
     }
-    if (Config.SEND_61_AS_HEX != null ) {
+    if (Config.SEND_61_AS_HEX != null) {
       send61AsHexCheckBox.setSelected(Config.SEND_61_AS_HEX);
     }
-    if (Config.GET_60_AS_HEX != null ) {
+    if (Config.GET_60_AS_HEX != null) {
       get60AsHexCheckBox.setSelected(Config.GET_60_AS_HEX);
     }
-    if (Config.GET_61_AS_HEX != null ) {
+    if (Config.GET_61_AS_HEX != null) {
       get61AsHexCheckBox.setSelected(Config.GET_61_AS_HEX);
     }
     revalidate();
     repaint();
+  }
+
+  private void updateConfig() {
+    Config.URL = ipTextField.getText();
+    Config.PORT = Integer.valueOf(portTextField.getText());
+    Config.TAG_NAME_LEN = Integer.valueOf(nameLenTextField.getText());
+    Config.TAG_SIZE_LEN = Integer.valueOf(sizeLenTextField.getText());
+    Config.SEND_60_AS_HEX = send60AsHexCheckBox.isSelected();
+    Config.SEND_61_AS_HEX = send61AsHexCheckBox.isSelected();
+    Config.GET_60_AS_HEX = get60AsHexCheckBox.isSelected();
+    Config.GET_61_AS_HEX = get61AsHexCheckBox.isSelected();
+
   }
 
   private void init() {
@@ -208,5 +225,78 @@ public class MainWindow extends JFrame {
     repaint();
   }
 
-  private void initConnections() {}
+  private void initConnections() {
+    actionListener =
+        new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == sendButton) {
+              sendButtonPressed();
+            }
+            if (e.getSource() == readIsoFileButton) {
+              readIsoFileButtonPressed();
+            }
+            if (e.getSource() == saveIsoFileButton) {
+              saveIsoFileButtonPressed();
+            }
+            if (e.getSource() == readConfigButton) {
+              readConfigButtonPressed();
+            }
+            if (e.getSource() == saveConfigButton) {
+              saveConfigButtonPressed();
+            }
+          }
+        };
+
+    sendButton.addActionListener(actionListener);
+    readIsoFileButton.addActionListener(actionListener);
+    saveIsoFileButton.addActionListener(actionListener);
+    readConfigButton.addActionListener(actionListener);
+    saveConfigButton.addActionListener(actionListener);
+  }
+
+  protected void readConfigButtonPressed() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'readConfigButtonPressed'");
+  }
+
+  protected void saveIsoFileButtonPressed() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'saveIsoFileButtonPressed'");
+  }
+
+  protected void readIsoFileButtonPressed() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'readIsoFileButtonPressed'");
+  }
+
+  protected void sendButtonPressed() {
+    updateConfig();
+    ISOSender isoSender = new ISOSender();
+    ISOContent input = new ISOContent();
+    input.setAsString(inputTextArea.getText());
+    
+    isoSender.setInputMessage(input);
+    isoSender.send();
+
+    StringBuilder outputString = new StringBuilder();
+    outputString.append(input.getAsString());
+    outputString.append(System.lineSeparator());
+
+    ISOContent output = isoSender.getOutputMessage();
+    if(output != null) {
+      outputString.append(output.getAsString());
+    } else {
+      outputString.append("null");
+    }
+
+    outputTextArea.setText(outputString.toString());
+  }
+
+  private void saveConfigButtonPressed() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'saveConfigButtonPressed'");
+  }
+
 }

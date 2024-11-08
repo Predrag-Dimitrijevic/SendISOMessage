@@ -48,51 +48,73 @@ public class ISOContent {
       if (isoMsg.hasField(i)) {
         log.debug("F[{}]: {}", i, isoMsg.getValue(i));
         if (i == 60) {
-          String field60 = null;
-          if (Config.GET_60_AS_HEX) {
-            byte[] field60ByteArray = (byte[]) isoMsg.getValue(60);
-            String field60Hex = byteArrayToHex(field60ByteArray);
-            field60 = convertHexToString(field60Hex);
+          try {
+            String field60 = null;
+            if (Config.GET_60_AS_HEX) {
+              Object field = isoMsg.getValue(60);
+              String field60Hex = null;
+              if(field instanceof String) {
+                field60Hex = (String) isoMsg.getValue(60);
+              } else if(field instanceof byte[]) {
+                byte[] field60ByteArray = (byte[]) isoMsg.getValue(60);
+                field60Hex = byteArrayToHex(field60ByteArray);
+              }
+              field60 = convertHexToString(field60Hex);
 
-          } else {
-            field60 = (String) isoMsg.getValue(60);
-          }
-          while (field60.length() > 0) {
-            String name = field60.substring(0, Config.TAG_NAME_LEN);
-            log.debug("tag name: {}", name);
-            field60 = field60.substring(Config.TAG_NAME_LEN);
-            String lenStr = field60.substring(0, Config.TAG_SIZE_LEN);
-            int len = Integer.valueOf(lenStr);
-            log.debug("tag len: {}", len);
-            field60 = field60.substring(Config.TAG_SIZE_LEN);
-            String value = field60.substring(0, len);
-            log.debug("tag value: {}", value);
-            field60 = field60.substring(len);
-            f60tags.put(name, value);
+            } else {
+              field60 = (String) isoMsg.getValue(60);
+            }
+            while (field60.length() > 0) {
+              String name = field60.substring(0, Config.TAG_NAME_LEN);
+              log.debug("tag name: {}", name);
+              field60 = field60.substring(Config.TAG_NAME_LEN);
+              String lenStr = field60.substring(0, Config.TAG_SIZE_LEN);
+              int len = Integer.valueOf(lenStr);
+              log.debug("tag len: {}", len);
+              field60 = field60.substring(Config.TAG_SIZE_LEN);
+              String value = field60.substring(0, len);
+              log.debug("tag value: {}", value);
+              field60 = field60.substring(len);
+              f60tags.put(name, value);
+            }
+          } catch (ClassCastException e) {
+            log.error("Converting field 60 error!");
+            log.error("ClassCastException" + e.getMessage());
           }
 
         } else if (i == 61) {
-          String field61 = null;
-          if (Config.GET_61_AS_HEX) {
-            byte[] field61ByteArray = (byte[]) isoMsg.getValue(61);
-            String field61Hex = byteArrayToHex(field61ByteArray);
-            field61 = convertHexToString(field61Hex);
+          try {
+            String field61 = null;
+            if (Config.GET_61_AS_HEX) {
+              Object field = isoMsg.getValue(61);
+              String field61Hex = null;
+              if(field instanceof String) {
+                field61Hex = (String) isoMsg.getValue(61);
+              } else if(field instanceof byte[]) {
+                byte[] field61ByteArray = (byte[]) isoMsg.getValue(61);
+                field61Hex = byteArrayToHex(field61ByteArray);
+              }
+              field61 = convertHexToString(field61Hex);
 
-          } else {
-            field61 = (String) isoMsg.getValue(61);
-          }
-          while (field61.length() > 0) {
-            String name = field61.substring(0, Config.TAG_NAME_LEN);
-            log.debug("tag name: {}", name);
-            field61 = field61.substring(Config.TAG_NAME_LEN);
-            String lenStr = field61.substring(0, Config.TAG_SIZE_LEN);
-            int len = Integer.valueOf(lenStr);
-            log.debug("tag len: {}", len);
-            field61 = field61.substring(Config.TAG_SIZE_LEN);
-            String value = field61.substring(0, len);
-            log.debug("tag value: {}", value);
-            field61 = field61.substring(len);
-            f61tags.put(name, value);
+            } else {
+              field61 = (String) isoMsg.getValue(61);
+            }
+            while (field61.length() > 0) {
+              String name = field61.substring(0, Config.TAG_NAME_LEN);
+              log.debug("tag name: {}", name);
+              field61 = field61.substring(Config.TAG_NAME_LEN);
+              String lenStr = field61.substring(0, Config.TAG_SIZE_LEN);
+              int len = Integer.valueOf(lenStr);
+              log.debug("tag len: {}", len);
+              field61 = field61.substring(Config.TAG_SIZE_LEN);
+              String value = field61.substring(0, len);
+              log.debug("tag value: {}", value);
+              field61 = field61.substring(len);
+              f61tags.put(name, value);
+            }
+          } catch (ClassCastException e) {
+            log.error("Converting field 60 error!");
+            log.error("ClassCastException" + e.getMessage());
           }
 
         } else {
@@ -182,12 +204,16 @@ public class ISOContent {
         if (fields.containsKey(i)) {
           sb.append(TYPE_FIELD);
           sb.append(' ');
+          sb.append(i);
+          sb.append(' ');
           sb.append(fields.get(i));
           sb.append(System.lineSeparator());
         }
       } else if (i == 60) {
         for (String tag : f60tags.keySet()) {
           sb.append(TYPE_TAG_60);
+          sb.append(' ');
+          sb.append(tag);
           sb.append(' ');
           sb.append(f60tags.get(tag));
           sb.append(System.lineSeparator());
@@ -196,6 +222,8 @@ public class ISOContent {
         for (String tag : f61tags.keySet()) {
           sb.append(TYPE_TAG_61);
           sb.append(' ');
+          sb.append(tag);
+          sb.append(' ');
           sb.append(f61tags.get(tag));
           sb.append(System.lineSeparator());
         }
@@ -203,6 +231,61 @@ public class ISOContent {
     }
 
     return sb.toString();
+  }
+
+  public void setAsString(String iso) {
+    fields = new HashMap<>();
+    f60tags = new HashMap<>();
+    f61tags = new HashMap<>();
+    maxField = -1;
+
+    if (iso != null) {
+      String[] lines = iso.split(System.lineSeparator());
+      if (lines != null && lines.length > 0) {
+        for (String line : lines) {
+          String type = null;
+          if (line.contains(" ")) {
+            type = line.substring(0, line.indexOf(" "));
+            line = line.substring(line.indexOf(" ") + 1);
+          }
+          log.debug("type: {}", type);
+
+          String name = null;
+          if (line.contains(" ")) {
+            name = line.substring(0, line.indexOf(" "));
+            line = line.substring(line.indexOf(" ") + 1);
+          }
+          log.debug("name: {}", name);
+
+          String content = line;
+          log.debug("content: {}", content);
+
+          if (!StringUtils.isEmpty(type)
+              && !StringUtils.isEmpty(name)
+              && !StringUtils.isEmpty(line)) {
+            if (TYPE_FIELD.equals(type)) {
+              Integer fieldNumber = Integer.valueOf(name);
+              if (fieldNumber != null) {
+                if (fieldNumber > maxField) {
+                  maxField = fieldNumber;
+                }
+                fields.put(fieldNumber, content);
+              }
+            } else if (TYPE_TAG_60.equals(type)) {
+              if (maxField < 60) {
+                maxField = 60;
+              }
+              f60tags.put(name, content);
+            } else if (TYPE_TAG_61.equals(type)) {
+              if (maxField < 61) {
+                maxField = 61;
+              }
+              f61tags.put(name, content);
+            }
+          }
+        }
+      }
+    }
   }
 
   public ISOMsg getISOMsg() throws ISOException {
