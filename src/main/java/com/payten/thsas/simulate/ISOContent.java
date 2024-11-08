@@ -16,7 +16,7 @@ import org.jpos.iso.ISOMsg;
 public class ISOContent {
 
   private static Logger log = LogManager.getLogger(ISOContent.class);
-  private static final String TYPE_FILE = "F";
+  private static final String TYPE_FIELD = "F";
   private static final String TYPE_TAG_60 = "T60";
   private static final String TYPE_TAG_61 = "T61";
 
@@ -139,7 +139,7 @@ public class ISOContent {
         if (!StringUtils.isEmpty(type)
             && !StringUtils.isEmpty(name)
             && !StringUtils.isEmpty(line)) {
-          if (TYPE_FILE.equals(type)) {
+          if (TYPE_FIELD.equals(type)) {
             Integer fieldNumber = Integer.valueOf(name);
             if (fieldNumber != null) {
               if (fieldNumber > maxField) {
@@ -172,6 +172,37 @@ public class ISOContent {
         log.error("IOException: " + e.getMessage());
       }
     }
+  }
+
+  public String getAsString() {
+    StringBuilder sb = new StringBuilder();
+
+    for (int i = 0; i <= maxField; i++) {
+      if (i < 60 || i > 61) {
+        if (fields.containsKey(i)) {
+          sb.append(TYPE_FIELD);
+          sb.append(' ');
+          sb.append(fields.get(i));
+          sb.append(System.lineSeparator());
+        }
+      } else if (i == 60) {
+        for (String tag : f60tags.keySet()) {
+          sb.append(TYPE_TAG_60);
+          sb.append(' ');
+          sb.append(f60tags.get(tag));
+          sb.append(System.lineSeparator());
+        }
+      } else if (i == 61) {
+        for (String tag : f61tags.keySet()) {
+          sb.append(TYPE_TAG_61);
+          sb.append(' ');
+          sb.append(f61tags.get(tag));
+          sb.append(System.lineSeparator());
+        }
+      }
+    }
+
+    return sb.toString();
   }
 
   public ISOMsg getISOMsg() throws ISOException {
@@ -226,7 +257,7 @@ public class ISOContent {
       tagsString.append(lenStr);
       tagsString.append(tags.get(name));
     }
-    if(sendAsHex) {
+    if (sendAsHex) {
       return byteArrayToHex(tagsString.toString().getBytes());
     }
 
@@ -240,7 +271,7 @@ public class ISOContent {
         for (String name : f60tags.keySet()) {
           log.info("F60_Tag[" + name + "]: " + f60tags.get(name));
         }
-      } else if(i == 61) {
+      } else if (i == 61) {
         for (String name : f61tags.keySet()) {
           log.info("F61_Tag[" + name + "]: " + f61tags.get(name));
         }
