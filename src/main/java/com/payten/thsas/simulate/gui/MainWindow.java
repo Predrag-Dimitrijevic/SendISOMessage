@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -16,8 +15,28 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import com.payten.thsas.simulate.config.Config;
+
 public class MainWindow extends JFrame {
   private JPanel mainPanel;
+  private JTextField ipTextField;
+  private JTextField portTextField;
+  private JTextField nameLenTextField;
+  private JTextField sizeLenTextField;
+  private JTextField packagerTextField;
+  private JCheckBox send60AsHexCheckBox;
+  private JCheckBox get60AsHexCheckBox;
+  private JCheckBox send61AsHexCheckBox;
+  private JCheckBox get61AsHexCheckBox;
+
+  JTextArea inputTextArea;
+  JTextArea outputTextArea;
+
+  private JButton sendButton;
+  private JButton readIsoFileButton;
+  private JButton saveIsoFileButton;
+  private JButton readConfigButton;
+  private JButton saveConfigButton;
 
   private int windowHeight = 600;
   private int windowWidth = 1100;
@@ -25,7 +44,41 @@ public class MainWindow extends JFrame {
   public MainWindow() {
     super();
     init();
+    populateConfig();
     initConnections();
+  }
+
+  private void populateConfig() {
+    Config.readConfig();
+    if (Config.URL != null) {
+      ipTextField.setText(Config.URL);
+    }
+    if (Config.PORT != null) {
+      portTextField.setText(String.valueOf(Config.PORT));
+    }
+    if (Config.TAG_NAME_LEN != null) {
+      nameLenTextField.setText(String.valueOf(Config.TAG_NAME_LEN));
+    }
+    if (Config.TAG_SIZE_LEN != null) {
+      sizeLenTextField.setText(String.valueOf(Config.TAG_SIZE_LEN));
+    }
+    if (Config.PACKAGER != null) {
+      packagerTextField.setText(Config.PACKAGER);
+    }
+    if (Config.SEND_60_AS_HEX != null ) {
+      send60AsHexCheckBox.setSelected(Config.SEND_60_AS_HEX);
+    }
+    if (Config.SEND_61_AS_HEX != null ) {
+      send61AsHexCheckBox.setSelected(Config.SEND_61_AS_HEX);
+    }
+    if (Config.GET_60_AS_HEX != null ) {
+      get60AsHexCheckBox.setSelected(Config.GET_60_AS_HEX);
+    }
+    if (Config.GET_61_AS_HEX != null ) {
+      get61AsHexCheckBox.setSelected(Config.GET_61_AS_HEX);
+    }
+    revalidate();
+    repaint();
   }
 
   private void init() {
@@ -40,7 +93,6 @@ public class MainWindow extends JFrame {
 
     mainPanel = new JPanel(new BorderLayout(5, 5));
 
-
     JPanel configPanel = new JPanel();
     configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.Y_AXIS));
 
@@ -48,25 +100,25 @@ public class MainWindow extends JFrame {
 
     JLabel ipLabel = new JLabel("IP:");
     configPanel1.add(ipLabel);
-    JTextField ipTextField = new JTextField();
+    ipTextField = new JTextField();
     ipTextField.setColumns(15);
     configPanel1.add(ipTextField);
 
     JLabel portLabel = new JLabel("PORT:");
     configPanel1.add(portLabel);
-    JTextField portTextField = new JTextField();
+    portTextField = new JTextField();
     portTextField.setColumns(5);
     configPanel1.add(portTextField);
 
     JLabel nameLenLabel = new JLabel("Tag name len:");
     configPanel1.add(nameLenLabel);
-    JTextField nameLenTextField = new JTextField();
+    nameLenTextField = new JTextField();
     nameLenTextField.setColumns(3);
     configPanel1.add(nameLenTextField);
 
     JLabel sizeLenLabel = new JLabel("Tag size len:");
     configPanel1.add(sizeLenLabel);
-    JTextField sizeLenTextField = new JTextField();
+    sizeLenTextField = new JTextField();
     sizeLenTextField.setColumns(3);
     configPanel1.add(sizeLenTextField);
 
@@ -75,30 +127,36 @@ public class MainWindow extends JFrame {
 
     JLabel packagerLabel = new JLabel("Packager:");
     configPanel2.add(packagerLabel);
-    JTextField packagerTextField = new JTextField();
+    packagerTextField = new JTextField();
     packagerTextField.setColumns(50);
     configPanel2.add(packagerTextField);
 
-    JCheckBox send60AsHexCheckBox = new JCheckBox("F60 HEX?");
+    send60AsHexCheckBox = new JCheckBox("Send F60 HEX?");
     configPanel2.add(send60AsHexCheckBox);
 
-    JCheckBox send61AsHexCheckBox = new JCheckBox("F61 HEX?");
+    get60AsHexCheckBox = new JCheckBox("Get F60 HEX?");
+    configPanel2.add(get60AsHexCheckBox);
+
+    send61AsHexCheckBox = new JCheckBox("Send F61 HEX?");
     configPanel2.add(send61AsHexCheckBox);
+
+    get61AsHexCheckBox = new JCheckBox("Get F61 HEX?");
+    configPanel2.add(get61AsHexCheckBox);
 
     configPanel.add(configPanel2);
 
     mainPanel.add(configPanel, BorderLayout.NORTH);
 
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JButton sendButton = new JButton("Send");
+    sendButton = new JButton("Send");
     buttonPanel.add(sendButton);
-    JButton readIsoFileButton = new JButton("Read ISO File");
+    readIsoFileButton = new JButton("Read ISO File");
     buttonPanel.add(readIsoFileButton);
-    JButton saveIsoFileButton = new JButton("Save ISO File");
+    saveIsoFileButton = new JButton("Save ISO File");
     buttonPanel.add(saveIsoFileButton);
-    JButton readConfigButton = new JButton("Read Config");
+    readConfigButton = new JButton("Read Config");
     buttonPanel.add(readConfigButton);
-    JButton saveConfigButton = new JButton("Save Config");
+    saveConfigButton = new JButton("Save Config");
     buttonPanel.add(saveConfigButton);
 
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -106,7 +164,7 @@ public class MainWindow extends JFrame {
     int textAreaWidth = 20;
     int textAreaHeight = 20;
 
-    JTextArea inputTextArea = new JTextArea();
+    inputTextArea = new JTextArea();
     inputTextArea.setLineWrap(true);
     inputTextArea.setPreferredSize(new Dimension(textAreaWidth, textAreaHeight));
 
@@ -114,7 +172,7 @@ public class MainWindow extends JFrame {
     inputScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     inputScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-    JTextArea outputTextArea = new JTextArea();
+    outputTextArea = new JTextArea();
     outputTextArea.setEditable(false);
     outputTextArea.setLineWrap(true);
     outputTextArea.setPreferredSize(new Dimension(textAreaWidth, textAreaHeight));
