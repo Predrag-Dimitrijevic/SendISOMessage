@@ -110,7 +110,6 @@ public class MainWindow extends JFrame {
     Config.SEND_61_AS_HEX = send61AsHexCheckBox.isSelected();
     Config.GET_60_AS_HEX = get60AsHexCheckBox.isSelected();
     Config.GET_61_AS_HEX = get61AsHexCheckBox.isSelected();
-
   }
 
   private void init() {
@@ -257,13 +256,47 @@ public class MainWindow extends JFrame {
   }
 
   protected void readConfigButtonPressed() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'readConfigButtonPressed'");
+    populateConfig();
   }
 
-  protected void saveIsoFileButtonPressed() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'saveIsoFileButtonPressed'");
+  private void saveConfigButtonPressed() {
+    if (ipTextField != null) {
+      Config.URL = ipTextField.getText();
+    }
+
+    if (portTextField != null) {
+      Config.PORT = Integer.valueOf(portTextField.getText());
+    }
+
+    if (nameLenTextField != null) {
+      Config.TAG_NAME_LEN = Integer.valueOf(nameLenTextField.getText());
+    }
+
+    if (sizeLenTextField != null) {
+      Config.TAG_SIZE_LEN = Integer.valueOf(sizeLenTextField.getText());
+    }
+
+    if (packagerTextField != null) {
+      Config.PACKAGER = packagerTextField.getText();
+    }
+
+    if (get60AsHexCheckBox != null) {
+      Config.GET_60_AS_HEX = get60AsHexCheckBox.isSelected();
+    }
+
+    if (send60AsHexCheckBox != null) {
+      Config.SEND_60_AS_HEX = send60AsHexCheckBox.isSelected();
+    }
+
+    if (get61AsHexCheckBox != null) {
+      Config.GET_61_AS_HEX = get61AsHexCheckBox.isSelected();
+    }
+
+    if (send61AsHexCheckBox != null) {
+      Config.SEND_61_AS_HEX = send61AsHexCheckBox.isSelected();
+    }
+
+    Config.writeConfig();
   }
 
   protected void readIsoFileButtonPressed() {
@@ -271,12 +304,17 @@ public class MainWindow extends JFrame {
     throw new UnsupportedOperationException("Unimplemented method 'readIsoFileButtonPressed'");
   }
 
+  protected void saveIsoFileButtonPressed() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'saveIsoFileButtonPressed'");
+  }
+
   protected void sendButtonPressed() {
     updateConfig();
     ISOSender isoSender = new ISOSender();
     ISOContent input = new ISOContent();
     input.setAsString(inputTextArea.getText());
-    
+
     isoSender.setInputMessage(input);
     isoSender.send();
 
@@ -285,7 +323,7 @@ public class MainWindow extends JFrame {
     outputString.append(System.lineSeparator());
 
     ISOContent output = isoSender.getOutputMessage();
-    if(output != null) {
+    if (output != null) {
       outputString.append(output.getAsString());
     } else {
       outputString.append("null");
@@ -293,10 +331,4 @@ public class MainWindow extends JFrame {
 
     outputTextArea.setText(outputString.toString());
   }
-
-  private void saveConfigButtonPressed() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'saveConfigButtonPressed'");
-  }
-
 }
