@@ -1,12 +1,13 @@
 package com.payten.thsas.simulate;
 
 import com.payten.thsas.simulate.config.Config;
+import com.payten.thsas.simulate.config.Constants;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** Hello world! */
 public class App {
-  private static final boolean DEBUG = false;
 	private static Logger log = LogManager.getLogger(App.class);
 
   public static void main(String[] args) {
@@ -15,7 +16,7 @@ public class App {
     ISOSender sender = new ISOSender();
     ISOContent input = new ISOContent();
 
-    if (DEBUG) {
+    if (Constants.DEBUG) {
       log.debug("DEBUG MODE ON");
       String configPath = "./src/main/config/";
       Config.readConfig(configPath + "config_debug.txt");

@@ -1,8 +1,10 @@
 package com.payten.thsas.simulate.gui;
 
+import com.payten.thsas.simulate.AppGUI;
 import com.payten.thsas.simulate.ISOContent;
 import com.payten.thsas.simulate.ISOSender;
 import com.payten.thsas.simulate.config.Config;
+import com.payten.thsas.simulate.config.Constants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -20,7 +22,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class MainWindow extends JFrame {
+
+  private static Logger log = LogManager.getLogger(MainWindow.class);
 
   private ActionListener actionListener;
 
@@ -69,7 +77,14 @@ public class MainWindow extends JFrame {
   }
 
   private void populateConfig() {
-    Config.readConfig();
+
+    if (Constants.DEBUG) {
+      log.debug("DEBUG MODE ON");
+      String configPath = "./src/main/config/";
+      Config.readConfig(configPath + "config_debug.txt");
+    } else {
+      Config.readConfig();
+    }
     if (Config.URL != null) {
       ipTextField.setText(Config.URL);
     }
@@ -197,7 +212,7 @@ public class MainWindow extends JFrame {
 
     inputTextArea = new JTextArea();
     inputTextArea.setLineWrap(true);
-    inputTextArea.setPreferredSize(new Dimension(textAreaWidth, textAreaHeight));
+    inputTextArea.setMinimumSize(new Dimension(textAreaWidth, textAreaHeight));
 
     JScrollPane inputScrollPane = new JScrollPane(inputTextArea);
     inputScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -206,7 +221,7 @@ public class MainWindow extends JFrame {
     outputTextArea = new JTextArea();
     outputTextArea.setEditable(false);
     outputTextArea.setLineWrap(true);
-    outputTextArea.setPreferredSize(new Dimension(textAreaWidth, textAreaHeight));
+    outputTextArea.setMinimumSize(new Dimension(textAreaWidth, textAreaHeight));
 
     JScrollPane outputScrollPane = new JScrollPane(outputTextArea);
     outputScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -319,6 +334,13 @@ public class MainWindow extends JFrame {
     isoSender.send();
 
     StringBuilder outputString = new StringBuilder();
+    String previousOutput = outputTextArea.getText();
+    if (!StringUtils.isBlank(previousOutput)) {
+      outputString.append(previousOutput);
+      outputString.append(Constants.NEW_LINE);
+    }
+    outputString.append(Constants.TRANSACTION_SEPARATOR);
+    outputString.append(Constants.NEW_LINE);
     outputString.append(input.getAsString());
     outputString.append(System.lineSeparator());
 
@@ -328,6 +350,7 @@ public class MainWindow extends JFrame {
     } else {
       outputString.append("null");
     }
+    outputString.append(Constants.TRANSACTION_SEPARATOR);
 
     outputTextArea.setText(outputString.toString());
   }

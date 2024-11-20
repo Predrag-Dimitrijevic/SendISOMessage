@@ -1,6 +1,8 @@
 package com.payten.thsas.simulate;
 
 import com.payten.thsas.simulate.config.Config;
+import com.payten.thsas.simulate.config.Constants;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,7 +20,6 @@ public class ISOSender {
 
 	private static Logger log = LogManager.getLogger(ISOSender.class);
 
-  public static final String NEW_LINE = System.getProperty("line.separator");
 
   private ISOMsg isoMsgIn = null;
   private ISOMsg isoMsgOut = null;
@@ -67,9 +68,9 @@ public class ISOSender {
 
   public static String dumpMessage(ISOMsg m) {
     StringBuilder s = new StringBuilder();
-    s.append("Message dump: " + NEW_LINE);
+    s.append("Message dump: " + Constants.NEW_LINE);
     if (m.getHeader() != null && m.getHeader().length > 0) {
-      s.append("Header : " + ISOUtil.dumpString(m.getHeader()) + NEW_LINE);
+      s.append("Header : " + ISOUtil.dumpString(m.getHeader()) + Constants.NEW_LINE);
     }
 
     for (int i = 0; i <= 128; i++) {
@@ -77,15 +78,15 @@ public class ISOSender {
       if (m.hasField(i)) {
         String fieldString = "Field [" + i + "] : ";
         if (i == 2) {
-          s.append(fieldString + maskPan(m.getString(i)) + NEW_LINE);
+          s.append(fieldString + maskPan(m.getString(i)) + Constants.NEW_LINE);
         } else if (i == 35) {
-          s.append(fieldString + maskTrack2(m.getString(i)) + NEW_LINE);
+          s.append(fieldString + maskTrack2(m.getString(i)) + Constants.NEW_LINE);
         } else if (i == 14) {
-          s.append(fieldString + "****" + NEW_LINE);
+          s.append(fieldString + "****" + Constants.NEW_LINE);
         } else if (i == 52) {
-          s.append(fieldString + "********" + NEW_LINE);
+          s.append(fieldString + "********" + Constants.NEW_LINE);
         } else {
-          s.append(fieldString + m.getString(i) + NEW_LINE);
+          s.append(fieldString + m.getString(i) + Constants.NEW_LINE);
         }
       }
     }
@@ -130,7 +131,7 @@ public class ISOSender {
 
 
   public static String getNewLine() {
-    return NEW_LINE;
+    return Constants.NEW_LINE;
   }
 
 

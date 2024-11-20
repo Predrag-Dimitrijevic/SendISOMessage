@@ -16,6 +16,9 @@ import org.jpos.iso.ISOMsg;
 public class ISOContent {
 
   private static Logger log = LogManager.getLogger(ISOContent.class);
+
+  private static final String NEW_LINE = "\n";
+
   private static final String TYPE_FIELD = "F";
   private static final String TYPE_TAG_60 = "T60";
   private static final String TYPE_TAG_61 = "T61";
@@ -50,32 +53,45 @@ public class ISOContent {
         if (i == 60) {
           try {
             String field60 = null;
+            log.debug("GET_60_AS_HEX: {}", Config.GET_60_AS_HEX);
             if (Config.GET_60_AS_HEX) {
               Object field = isoMsg.getValue(60);
               String field60Hex = null;
-              if(field instanceof String) {
+              if (field instanceof String) {
+                log.debug("field 60 is an instance of String");
                 field60Hex = (String) isoMsg.getValue(60);
-              } else if(field instanceof byte[]) {
+              } else if (field instanceof byte[]) {
+                log.debug("field 60 is an instance of byte[]");
                 byte[] field60ByteArray = (byte[]) isoMsg.getValue(60);
                 field60Hex = byteArrayToHex(field60ByteArray);
               }
+              log.debug("field60Hex: {}", field60Hex);
               field60 = convertHexToString(field60Hex);
 
             } else {
               field60 = (String) isoMsg.getValue(60);
             }
-            while (field60.length() > 0) {
-              String name = field60.substring(0, Config.TAG_NAME_LEN);
-              log.debug("tag name: {}", name);
-              field60 = field60.substring(Config.TAG_NAME_LEN);
-              String lenStr = field60.substring(0, Config.TAG_SIZE_LEN);
-              int len = Integer.valueOf(lenStr);
-              log.debug("tag len: {}", len);
-              field60 = field60.substring(Config.TAG_SIZE_LEN);
-              String value = field60.substring(0, len);
-              log.debug("tag value: {}", value);
-              field60 = field60.substring(len);
-              f60tags.put(name, value);
+            log.debug("field60: {}", field60);
+            String originalF60 = field60;
+            try {
+              while (field60.length() > 0) {
+                String name = field60.substring(0, Config.TAG_NAME_LEN);
+                log.debug("tag name: {}", name);
+                field60 = field60.substring(Config.TAG_NAME_LEN);
+                String lenStr = field60.substring(0, Config.TAG_SIZE_LEN);
+                int len = Integer.valueOf(lenStr);
+                log.debug("tag len: {}", len);
+                field60 = field60.substring(Config.TAG_SIZE_LEN);
+                String value = field60.substring(0, len);
+                log.debug("tag value: {}", value);
+                field60 = field60.substring(len);
+                f60tags.put(name, value);
+              }
+            } catch (StringIndexOutOfBoundsException e) {
+              log.error("StringIndexOutOfBoundsException: {}", e.getLocalizedMessage());
+              log.error("Setting field 60 as a field!");
+              f60tags = new HashMap<>();;
+              fields.put(60, originalF60);
             }
           } catch (ClassCastException e) {
             log.error("Converting field 60 error!");
@@ -85,32 +101,45 @@ public class ISOContent {
         } else if (i == 61) {
           try {
             String field61 = null;
+            log.debug("GET_61_AS_HEX: {}", Config.GET_61_AS_HEX);
             if (Config.GET_61_AS_HEX) {
               Object field = isoMsg.getValue(61);
               String field61Hex = null;
-              if(field instanceof String) {
+              if (field instanceof String) {
+                log.debug("field 61 is an instance of String");
                 field61Hex = (String) isoMsg.getValue(61);
-              } else if(field instanceof byte[]) {
+              } else if (field instanceof byte[]) {
+                log.debug("field 61 is an instance of byte[]");
                 byte[] field61ByteArray = (byte[]) isoMsg.getValue(61);
                 field61Hex = byteArrayToHex(field61ByteArray);
               }
+              log.debug("field61Hex: {}", field61Hex);
               field61 = convertHexToString(field61Hex);
 
             } else {
               field61 = (String) isoMsg.getValue(61);
             }
-            while (field61.length() > 0) {
-              String name = field61.substring(0, Config.TAG_NAME_LEN);
-              log.debug("tag name: {}", name);
-              field61 = field61.substring(Config.TAG_NAME_LEN);
-              String lenStr = field61.substring(0, Config.TAG_SIZE_LEN);
-              int len = Integer.valueOf(lenStr);
-              log.debug("tag len: {}", len);
-              field61 = field61.substring(Config.TAG_SIZE_LEN);
-              String value = field61.substring(0, len);
-              log.debug("tag value: {}", value);
-              field61 = field61.substring(len);
-              f61tags.put(name, value);
+            log.debug("field61: {}", field61);
+            String originalF61 = field61;
+            try {
+              while (field61.length() > 0) {
+                String name = field61.substring(0, Config.TAG_NAME_LEN);
+                log.debug("tag name: {}", name);
+                field61 = field61.substring(Config.TAG_NAME_LEN);
+                String lenStr = field61.substring(0, Config.TAG_SIZE_LEN);
+                int len = Integer.valueOf(lenStr);
+                log.debug("tag len: {}", len);
+                field61 = field61.substring(Config.TAG_SIZE_LEN);
+                String value = field61.substring(0, len);
+                log.debug("tag value: {}", value);
+                field61 = field61.substring(len);
+                f61tags.put(name, value);
+              }
+            } catch (StringIndexOutOfBoundsException e) {
+              log.error("StringIndexOutOfBoundsException: {}", e.getLocalizedMessage());
+              log.error("Setting field 61 as a field!");
+              f61tags = new HashMap<>();;
+              fields.put(61, originalF61);
             }
           } catch (ClassCastException e) {
             log.error("Converting field 60 error!");
@@ -207,25 +236,41 @@ public class ISOContent {
           sb.append(i);
           sb.append(' ');
           sb.append(fields.get(i));
-          sb.append(System.lineSeparator());
+          sb.append(NEW_LINE);
         }
       } else if (i == 60) {
+        if(fields.containsKey(60)) {
+          sb.append(TYPE_FIELD);
+          sb.append(' ');
+          sb.append(60);
+          sb.append(' ');
+          sb.append(fields.get(60));
+          sb.append(NEW_LINE);
+        }
         for (String tag : f60tags.keySet()) {
           sb.append(TYPE_TAG_60);
           sb.append(' ');
           sb.append(tag);
           sb.append(' ');
           sb.append(f60tags.get(tag));
-          sb.append(System.lineSeparator());
+          sb.append(NEW_LINE);
         }
       } else if (i == 61) {
+        if(fields.containsKey(61)) {
+          sb.append(TYPE_FIELD);
+          sb.append(' ');
+          sb.append(61);
+          sb.append(' ');
+          sb.append(fields.get(61));
+          sb.append(NEW_LINE);
+        }
         for (String tag : f61tags.keySet()) {
           sb.append(TYPE_TAG_61);
           sb.append(' ');
           sb.append(tag);
           sb.append(' ');
           sb.append(f61tags.get(tag));
-          sb.append(System.lineSeparator());
+          sb.append(NEW_LINE);
         }
       }
     }
@@ -240,7 +285,7 @@ public class ISOContent {
     maxField = -1;
 
     if (iso != null) {
-      String[] lines = iso.split(System.lineSeparator());
+      String[] lines = iso.split(NEW_LINE);
       if (lines != null && lines.length > 0) {
         for (String line : lines) {
           String type = null;
