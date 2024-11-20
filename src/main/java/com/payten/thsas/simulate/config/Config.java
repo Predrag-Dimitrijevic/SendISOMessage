@@ -36,6 +36,10 @@ public class Config {
       String line = br.readLine();
       while (line != null) {
         int blancIndex = line.indexOf(' ');
+        if (blancIndex <= 0) {
+          line = br.readLine();
+          continue;
+        }
         String name = line.substring(0, blancIndex);
         String value = line.substring(blancIndex + 1);
 
