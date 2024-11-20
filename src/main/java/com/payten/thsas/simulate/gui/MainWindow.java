@@ -51,6 +51,8 @@ public class MainWindow extends JFrame {
   private JButton saveIsoFileButton;
   private JButton readConfigButton;
   private JButton saveConfigButton;
+  private JButton clearOutputButton;
+  private JButton saveOutputButton;
 
   private int windowHeight = 600;
   private int windowWidth = 1100;
@@ -204,6 +206,10 @@ public class MainWindow extends JFrame {
     buttonPanel.add(readConfigButton);
     saveConfigButton = new JButton("Save Config");
     buttonPanel.add(saveConfigButton);
+    clearOutputButton = new JButton("Clear Output");
+    buttonPanel.add(clearOutputButton);
+    saveOutputButton = new JButton("Save Output");
+    buttonPanel.add(saveOutputButton);
 
     mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -260,6 +266,12 @@ public class MainWindow extends JFrame {
             if (e.getSource() == saveConfigButton) {
               saveConfigButtonPressed();
             }
+            if (e.getSource() == clearOutputButton) {
+              clearOutputButtonPressed();
+            }
+            if (e.getSource() == saveOutputButton) {
+              saveOutputButtonPressed();
+            }
           }
         };
 
@@ -268,6 +280,16 @@ public class MainWindow extends JFrame {
     saveIsoFileButton.addActionListener(actionListener);
     readConfigButton.addActionListener(actionListener);
     saveConfigButton.addActionListener(actionListener);
+  }
+
+  protected void saveOutputButtonPressed() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'saveOutputButtonPressed'");
+  }
+
+  protected void clearOutputButtonPressed() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'clearOutputButtonPressed'");
   }
 
   protected void readConfigButtonPressed() {
