@@ -1,7 +1,6 @@
 package com.payten.thsas.simulate;
 
 import com.payten.thsas.simulate.config.Config;
-import com.payten.thsas.simulate.config.Constants;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,13 +15,7 @@ public class App {
     ISOSender sender = new ISOSender();
     ISOContent input = new ISOContent();
 
-    if (Constants.DEBUG) {
-      log.debug("DEBUG MODE ON");
-      String configPath = "./src/main/config/";
-      Config.readConfig(configPath + "config_debug.txt");
-    } else {
-      Config.readConfig();
-    }
+    Config.readConfig();
 
     input.readFile();
     log.info("Input: ");

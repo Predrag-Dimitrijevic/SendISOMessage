@@ -12,8 +12,6 @@ import org.apache.logging.log4j.Logger;
 public class Config {
   private static Logger log = LogManager.getLogger(Config.class);
 
-  private static final String CONFIG_LOCATION = "../config/config.txt";
-
   public static String URL = null;
   public static Integer PORT = null;
   public static String PACKAGER = null;
@@ -97,7 +95,12 @@ public class Config {
   }
 
   public static void readConfig() {
-    readConfig(CONFIG_LOCATION);
+    if (Constants.DEBUG) {
+      log.debug("DEBUG MODE ON");
+      readConfig(Constants.CONFIG_LOCATION_DEBUG);
+    } else {
+      readConfig(Constants.CONFIG_LOCATION);
+    }
   }
 
   public static void writeConfig(String filePath) {
@@ -143,6 +146,11 @@ public class Config {
   }
 
   public static void writeConfig() {
-    writeConfig(CONFIG_LOCATION);
+    if (Constants.DEBUG) {
+      log.debug("DEBUG MODE ON");
+      writeConfig(Constants.CONFIG_LOCATION_DEBUG);
+    } else {
+      writeConfig(Constants.CONFIG_LOCATION);
+    }
   }
 }
