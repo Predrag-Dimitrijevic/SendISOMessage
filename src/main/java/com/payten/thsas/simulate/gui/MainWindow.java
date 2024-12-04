@@ -1,6 +1,5 @@
 package com.payten.thsas.simulate.gui;
 
-import com.payten.thsas.simulate.AppGUI;
 import com.payten.thsas.simulate.ISOContent;
 import com.payten.thsas.simulate.ISOSender;
 import com.payten.thsas.simulate.config.Config;
@@ -11,9 +10,13 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,7 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -280,6 +282,8 @@ public class MainWindow extends JFrame {
     saveIsoFileButton.addActionListener(actionListener);
     readConfigButton.addActionListener(actionListener);
     saveConfigButton.addActionListener(actionListener);
+    clearOutputButton.addActionListener(actionListener);
+    saveOutputButton.addActionListener(actionListener);
   }
 
   protected void saveOutputButtonPressed() {
@@ -288,8 +292,9 @@ public class MainWindow extends JFrame {
   }
 
   protected void clearOutputButtonPressed() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'clearOutputButtonPressed'");
+    outputTextArea.setText("");
+    revalidate();
+    repaint();
   }
 
   protected void readConfigButtonPressed() {
@@ -337,13 +342,50 @@ public class MainWindow extends JFrame {
   }
 
   protected void readIsoFileButtonPressed() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'readIsoFileButtonPressed'");
+    JFileChooser fileChooser = new JFileChooser();
+    String configLocation = Constants.CONFIG_LOCATION;
+    fileChooser.setCurrentDirectory(new File(configLocation));
+
+    int result = fileChooser.showOpenDialog(null);
+    if (result == JFileChooser.APPROVE_OPTION) {
+      File selectedFile = fileChooser.getSelectedFile();
+      ISOContent input = new ISOContent();
+      input.readFile(selectedFile.getAbsolutePath());
+
+      inputTextArea.setText(input.getAsString());
+
+      revalidate();
+      repaint();
+    }
   }
 
   protected void saveIsoFileButtonPressed() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'saveIsoFileButtonPressed'");
+    String inputText = inputTextArea.getText();
+
+    JFileChooser fileChooser = new JFileChooser();
+    String configLocation = Constants.CONFIG_LOCATION;
+    fileChooser.setCurrentDirectory(new File(configLocation));
+
+    int result = fileChooser.showOpenDialog(null);
+    if (result == JFileChooser.APPROVE_OPTION) {
+      File selectedFile = fileChooser.getSelectedFile();
+      FileWriter fw = null;
+      try {
+        fw = new FileWriter(selectedFile);
+        fw.write(inputText);
+
+      } catch (IOException e) {
+        log.error("IOException: {}", e.getLocalizedMessage());
+      } finally {
+        if (fw != null) {
+          try {
+            fw.close();
+          } catch (IOException e) {
+            log.error("IOException: {}", e.getLocalizedMessage());
+          }
+        }
+      }
+    }
   }
 
   protected void sendButtonPressed() {
