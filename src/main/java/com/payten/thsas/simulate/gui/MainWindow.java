@@ -13,6 +13,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -287,8 +291,37 @@ public class MainWindow extends JFrame {
   }
 
   protected void saveOutputButtonPressed() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'saveOutputButtonPressed'");
+    String outputText = outputTextArea.getText();
+
+    JFileChooser fileChooser = new JFileChooser();
+    String configLocation = Constants.CONFIG_LOCATION;
+    fileChooser.setCurrentDirectory(new File(configLocation));
+
+      SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+      String fileName = "out_" + df.format(new Date()) + ".txt";
+      log.debug("fileName {}", fileName);
+      fileChooser.setSelectedFile(new File(fileName));
+
+    int result = fileChooser.showOpenDialog(null);
+    if (result == JFileChooser.APPROVE_OPTION) {
+      FileWriter fw = null;
+      try {
+        File selectedFile = fileChooser.getSelectedFile();
+        fw = new FileWriter(selectedFile);
+        fw.write(outputText);
+
+      } catch (IOException e) {
+        log.error("IOException: {}", e.getLocalizedMessage());
+      } finally {
+        if (fw != null) {
+          try {
+            fw.close();
+          } catch (IOException e) {
+            log.error("IOException: {}", e.getLocalizedMessage());
+          }
+        }
+      }
+    }
   }
 
   protected void clearOutputButtonPressed() {
