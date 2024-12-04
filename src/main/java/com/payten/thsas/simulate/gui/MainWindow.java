@@ -297,10 +297,10 @@ public class MainWindow extends JFrame {
     String configLocation = Constants.CONFIG_LOCATION;
     fileChooser.setCurrentDirectory(new File(configLocation));
 
-      SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-      String fileName = "out_" + df.format(new Date()) + ".txt";
-      log.debug("fileName {}", fileName);
-      fileChooser.setSelectedFile(new File(fileName));
+    SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+    String fileName = "out_" + df.format(new Date()) + ".txt";
+    log.debug("fileName {}", fileName);
+    fileChooser.setSelectedFile(new File(fileName));
 
     int result = fileChooser.showOpenDialog(null);
     if (result == JFileChooser.APPROVE_OPTION) {
@@ -398,6 +398,7 @@ public class MainWindow extends JFrame {
     JFileChooser fileChooser = new JFileChooser();
     String configLocation = Constants.CONFIG_LOCATION;
     fileChooser.setCurrentDirectory(new File(configLocation));
+    fileChooser.setSelectedFile(new File("iso_msg.txt"));
 
     int result = fileChooser.showOpenDialog(null);
     if (result == JFileChooser.APPROVE_OPTION) {
